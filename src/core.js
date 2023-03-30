@@ -13,7 +13,7 @@ function verticalSlidesGenerator (photo1, photo2) {
 
 function interestCalculator(slide1, slide2) {
   const commonTags = intersection(slide1.tags, slide2.tags)
-  console.log('commonTags', commonTags, commonTags.length)
+  // console.log('commonTags', commonTags, commonTags.length)
   const a = slide1.tags.length - commonTags.length
   const b = slide2.tags.length - commonTags.length
 
@@ -40,7 +40,7 @@ function slideIncludesIndexes(indexes, slide) {
 }
 
 function reverseOrNotNext(transition, slide) {
-  console.log("reverseOrNotNext", JSON.stringify(transition, null, 2), slide)
+  // console.log("reverseOrNotNext", JSON.stringify(transition, null, 2), slide)
   if (equals(transition.slide1.indexes, slide.indexes)) {
     return [transition.slide2]
   }

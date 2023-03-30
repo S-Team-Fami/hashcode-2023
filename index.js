@@ -61,6 +61,7 @@ function outputFile(slides) {
 
 const start = () => {
   files.forEach(fileName => {
+    console.log("filename", fileName)
     // extract data from file
     const {photos, photoCount} = parseFile(fileName)
     const horizontalPhotos = photos.filter(photos => photos.orientation  === HORIZONTAL_SYMBOL)
@@ -85,7 +86,7 @@ const start = () => {
 
     let sortedTransitions = possibleTransitions.sort((a, b) => b.interest - a.interest)
 
-    console.log("sortedTransitions", sortedTransitions[0])
+    // console.log("sortedTransitions", sortedTransitions[0])
     const slideShow = []
     slideShow.push(
       sortedTransitions[0].slide1,
@@ -98,7 +99,7 @@ const start = () => {
       const prevTransIndex = findNeighbours(slideShow[0], sortedTransitions)
       const nextTransIndex = findNeighbours(slideShow[slideShow.length - 1], sortedTransitions)
 
-      console.log("indexes", prevTransIndex, nextTransIndex)
+      // console.log("indexes", prevTransIndex, nextTransIndex)
 
       if (prevTransIndex === -1 && nextTransIndex === -1) {
         break
@@ -121,7 +122,7 @@ const start = () => {
           )
         })
 
-        console.log("sortedTransitions", sortedTransitions)
+        // console.log("sortedTransitions", sortedTransitions)
       } else {
         slideShow.push(...reverseOrNotNext(nextTrans, slideShow[slideShow.length - 1]))
         sortedTransitions = sortedTransitions.filter(transition => {
@@ -130,15 +131,16 @@ const start = () => {
             equals(transition.slide2.indexes, slideShow[slideShow.length - 1].indexes)
           )
         })
-        console.log("sortedTransitions", sortedTransitions)
+        // console.log("sortedTransitions", sortedTransitions)
       }
 
-      console.log('slideShow', slideShow)
+      // console.log('slideShow', slideShow)
     }
 
     const out = outputFile(slideShow)
 
     fs.outputFileSync(`./out/${fileName}.out`, out, { encoding: 'utf-8' })
+    console.log('file end', fileName)
   })
 }
 
