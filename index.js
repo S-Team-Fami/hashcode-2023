@@ -3,9 +3,12 @@
 const path = require('path')
 const fs = require('fs-extra')
 const { get, set } = require('lodash')
+const { without } = require('ramda')
 
 const fileParser = require('./src/fileParser')
-const {} = require('./src/core')
+const {
+  interestFactor
+} = require('./src/core')
 
 const files = [
   'a.txt',
@@ -22,26 +25,41 @@ function parseFile(fileName) {
     { splitInRows: true }
   )
 
-  console.log('rows', rows)
+  const [photoCount, ...lines] = rows
+  const photos = lines.map(line => {
+    const [orientation, tagCount, ...tags] = line.split(' ')
+    return {
+      orientation,
+      tagCount,
+      tags,
+    }
+  })
 
-  const [header, ...otherRows] = rows
-
-
-  const result = []
-  return result
+  return {
+    photos,
+    photoCount
+  }
+}
+function outputFile(slidesNumber = 0, slides) {
+  return `${slidesNumber}
+${slides.join('\n')}
+  `
 }
 
 const start = () => {
   files.forEach(fileName => {
     // extract data from file
-    const result = parseFile(fileName)
+    const {photos, photoCount} = parseFile(fileName)
 
 
-    const rowsList = []
+    // console.log(without(, ))
     // put your core logic here
 
+    const a = outputFile(3, ['1', '2 3', '4'])
+
+    console.log(a)
     // save data
-    fs.outputFileSync(`./out/${fileName}.out`, rowsList.join('\n'), { encoding: 'utf-8' })
+    fs.outputFileSync(`./out/${fileName}.out`, a, { encoding: 'utf-8' })
   })
 }
 
