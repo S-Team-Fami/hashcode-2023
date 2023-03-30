@@ -1,18 +1,14 @@
-const {union, intersection} = require('ramda')
+const {union, intersection, equals} = require('ramda')
 function interestFactor() {
 
 }
 
 function verticalSlidesGenerator (photo1, photo2) {
-  const slide = {
+  return  {
     orientation: 'V',
-    p1: photo1.index,
-    p2: photo2.index,
+    indexes: photo1.indexes.concat(photo2.indexes),
     tags: union(photo1.tags, photo2.tags)
   }
-  console.log('slide', slide)
-
-  return slide
 }
 
 function interestCalculator(slide1, slide2) {
@@ -29,19 +25,33 @@ function interestCalculator(slide1, slide2) {
 }
 
 function getSlidesPhotoIndexes(slide) {
-  if (slide.orientation === 'V') {
-    return [slide.p1, slide.p2]
-  }
+  return slide.indexes
+}
 
-  return [slide.index]
+function findNeighbours(slide, transitions) {
+  return transitions.findIndex(transition => (
+    equals(slide, transition.slide2) ||
+    equals(slide, transition.slide1)
+  ))
 }
 
 function slideIncludesIndexes(indexes, slide) {
-  return (
-    indexes.includes(slide.index) ||
-    indexes.includes(slide.p1) ||
-    indexes.includes(slide.p2)
-  )
+  return indexes.some(index => slide.indexes.includes(index))
+}
+
+function reverseOrNotNext(transition, slide) {
+  console.log("reverseOrNotNext", JSON.stringify(transition, null, 2), slide)
+  if (equals(transition.slide1.indexes, slide.indexes)) {
+    return [transition.slide2]
+  }
+  return [transition.slide1]
+}
+
+function reverseOrNotPrev(transition, slide) {
+  if (equals(transition.slide2.indexes, slide.indexes)) {
+    return [transition.slide1]
+  }
+  return [transition.slide2]
 }
 
 module.exports = {
@@ -49,5 +59,8 @@ module.exports = {
   interestCalculator,
   getSlidesPhotoIndexes,
   slideIncludesIndexes,
-  verticalSlidesGenerator
+  verticalSlidesGenerator,
+  findNeighbours,
+  reverseOrNotNext,
+  reverseOrNotPrev
 }
