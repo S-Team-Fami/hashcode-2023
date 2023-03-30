@@ -7,9 +7,9 @@ const { without } = require('ramda')
 
 const fileParser = require('./src/fileParser')
 const {
-  interestFactor,
+  slideIncludesIndexes,
   interestCalculator,
-  verticalSlidesGenerator
+  verticalSlidesGenerator, getSlidesPhotoIndexes
 } = require('./src/core')
 
 const files = [
@@ -57,7 +57,6 @@ const start = () => {
     const {photos, photoCount} = parseFile(fileName)
     const horizontalPhotos = photos.filter(photos => photos.orientation  === HORIZONTAL_SYMBOL)
     const verticalPhotos = photos.filter(photos => photos.orientation === VERTICAL_SYMBOL)
-
     const verticalSlides = verticalPhotos.flatMap((photo, index) => {
       const array = []
       for (let i = index + 1; i < verticalPhotos.length; i++) {
@@ -68,7 +67,6 @@ const start = () => {
     })
 
     const possibleSlides = [...verticalSlides, ...horizontalPhotos]
-
     const possibleTransitions = possibleSlides.flatMap((slide, index) => {
       const array = []
       for (let i = index + 1; i < possibleSlides.length; i++) {
@@ -77,17 +75,26 @@ const start = () => {
       return array
     })
 
+    let sortedTransition = possibleTransitions.sort((a, b) => b.interest - a.interest)
+    let maxTransition = {}
 
+    const slideShow = []
+    while (sortedTransition.length > 0) {
+      maxTransition = sortedTransition.shift()
+      slideShow.push(maxTransition)
+      const maxTransitionPhotoIndexes = [
+        ...getSlidesPhotoIndexes(maxTransition.slide1),
+        ...getSlidesPhotoIndexes(maxTransition.slide2)
+      ]
 
-    // console.log('verticalSlides', verticalSlides)
-    console.log('possibleTransitions', possibleTransitions)
+      sortedTransition = sortedTransition.filter(({slide1, slide2}, index) => {
+        const tr1 = slideIncludesIndexes(maxTransitionPhotoIndexes, slide1)
+        const tr2 = slideIncludesIndexes(maxTransitionPhotoIndexes, slide2)
+        return !(tr1 || tr2)
+      })
+    }
 
-    // vertical photo -> combinazione di tag con tutte le slide
-    // orizontali che contiene i tag dell foto oriziontali
-    // le foto verticali funzione che ci torni la combinazione dei tag -> ramda union
-    // una volta che abbiamo le slide orizontali e tutte le combinazione
-    // e tutte le possibili slide vertcali possiamo calcolare le coppie
-
+    console.log('slideShow', slideShow)
     const a = outputFile(3, ['0', '1 2', '3'])
 
     // save data

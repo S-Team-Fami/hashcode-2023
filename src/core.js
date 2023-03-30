@@ -28,8 +28,26 @@ function interestCalculator(slide1, slide2) {
   }
 }
 
+function getSlidesPhotoIndexes(slide) {
+  if (slide.orientation === 'V') {
+    return [slide.p1, slide.p2]
+  }
+
+  return [slide.index]
+}
+
+function slideIncludesIndexes(indexes, slide) {
+  return (
+    indexes.includes(slide.index) ||
+    indexes.includes(slide.p1) ||
+    indexes.includes(slide.p2)
+  )
+}
+
 module.exports = {
   interestFactor,
   interestCalculator,
+  getSlidesPhotoIndexes,
+  slideIncludesIndexes,
   verticalSlidesGenerator
 }
