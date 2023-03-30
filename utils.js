@@ -9,5 +9,5 @@ const permutations = (tokens, subperms = [[]]) =>
     ), tokens);
 
 
-console.log(permutations(['A', 'B', 'C']))
+// console.log(permutations(['A', 'B', 'C']))
 //=> ["ABC", "ACB", "BAC", "BCA", "CAB", "CBA"]
